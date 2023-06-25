@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>欢迎 学习WebSocket </h1>
+  <textarea rows="10" cols="30" id="textarea" placeholder="请输入内容"></textarea>
+    <button onclick="sendHandler()">点击按钮</button>
+</body>
+<script>
+  // 创建 WebSocket并指定一个地址
+  let ws = new WebSocket('ws://localhost:8080')
+  // 是否链接成功
+  ws.onopen = (() => {
+    console.log("链接成功")
+  })
+  // 监听服务端发送过来的消息
+  ws.onmessage = ((messObj) => {
+    console.log('发送过来的消息', messObj)
+  })
+  // 连接失败
+  ws.onerror = (() => {
+    console.log('连接失败')
+  })
+  let textarea=document.getElementById('textarea')
+  function sendHandler(){
+    const textareaValue = textarea.value;
+    // 通过ws.send给客户端发送消息
+    ws.send(textareaValue)
+  }
+
+  // 关闭当前窗口，按下 F5 或点击以下链接触发 onbeforeunload 事件
+document.body.onbeforeunload = function () {
+  event.returnValue = "我在这写点东西...";
+  ws.close()
+  return 'close'
+}
+
+// 离开当前页面会触发
+window.onunload = function (e) {
+  var e = window.event || e;
+  console.log('===>',e)
+  // 离开页面，关闭WebSocket
+  ws.close()
+}
+  </script>
+</html>
